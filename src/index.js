@@ -246,6 +246,7 @@ class Offline {
       const fun = this.service.getFunction(key);
       const funName = key;
       const funOptions = functionHelper.getFunctionOptions(fun, key, this.serverless.config.servicePath);
+      console.log(this.serverless.config);
 
       printBlankLine();
       debugLog(funName, 'runtime', serviceRuntime, funOptions.babelOptions || '');
