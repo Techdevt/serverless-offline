@@ -257,7 +257,7 @@ class Offline {
       // Add a route for static endpoint
       this.server.route({
         method: 'GET',
-        path: '/static/{file*}',
+        path: '/static/{param1*}/{param2*}/{param3*}',
         handler: {
           directory: {
             path: this.serverless.config.staticPath,
