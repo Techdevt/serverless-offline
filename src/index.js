@@ -9,6 +9,7 @@ const path = require('path');
 
 // External dependencies
 const Hapi = require('hapi');
+const Inert = require('inert');
 const isPlainObject = require('lodash').isPlainObject;
 
 // Internal lib
@@ -229,6 +230,8 @@ class Offline {
 
     // Passes the configuration object to the server
     this.server.connection(connectionOptions);
+    // Register inert plugin
+    this.server.register(Inert, () => {});
   }
 
   _createRoutes() {
@@ -246,11 +249,21 @@ class Offline {
       const fun = this.service.getFunction(key);
       const funName = key;
       const funOptions = functionHelper.getFunctionOptions(fun, key, this.serverless.config.servicePath);
-      console.log(this.serverless.config);
 
       printBlankLine();
       debugLog(funName, 'runtime', serviceRuntime, funOptions.babelOptions || '');
       this.serverlessLog(`Routes for ${funName}:`);
+
+      // Add a route for static endpoint
+      this.server.route({
+        method: 'GET',
+        path: '/static/{file*}',
+        handler: {
+          directory: {
+            path: this.serverless.config.staticPath,
+          },
+        },
+      });
 
       // Adds a route for each http endpoint
       fun.events.forEach(event => {
